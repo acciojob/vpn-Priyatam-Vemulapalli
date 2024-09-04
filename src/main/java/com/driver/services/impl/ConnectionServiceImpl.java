@@ -24,14 +24,14 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Override
     public User connect(int userId, String countryName) throws Exception{
         User user = userRepository2.findById(userId).get();
-        if(ObjectUtils.isEmpty(user)){
-            throw new Exception("User not found");
-        }
+//        if(ObjectUtils.isEmpty(user)){
+//            throw new Exception("User not found");
+//        }
 
         if(user.getMaskedIp()!=null){
             throw new Exception("Already connected");
         }
-        if(user.getOriginalCountry().getCountryName().toString().equalsIgnoreCase(countryName)){
+        else if(user.getOriginalCountry().getCountryName().toString().equalsIgnoreCase(countryName)){
             return user;
         }
         else{
@@ -72,38 +72,38 @@ public class ConnectionServiceImpl implements ConnectionService {
 
                 serviceProviderRepository2.save(serviceProvider);
                 userRepository2.save(user);
-
+                return user;
+            }
+            else{
+                throw new Exception("Unable to connect");
             }
         }
-        return user;
+
     }
     @Override
     public User disconnect(int userId) throws Exception {
         User user = userRepository2.findById(userId).get();
 
-        if(!ObjectUtils.isEmpty(user)){
-            if(user.getConnected()==false){
+        if(user.getConnected()==false){
                 throw new Exception("Already disconnected");
             }
             user.setMaskedIp(null);
             user.setConnected(false);
             userRepository2.save(user);
 
-        }
-        else{
-            throw new Exception("User not found");
-        }
         return user;
     }
+
+
 
     @Override
     public User communicate(int senderId, int receiverId) throws Exception {
 
         User sender= userRepository2.findById(senderId).get();
         User receiver=userRepository2.findById(receiverId).get();
-        if(ObjectUtils.isEmpty(sender) || ObjectUtils.isEmpty(receiver)){
-            throw new Exception("Invalid Ids");
-        }
+//        if(ObjectUtils.isEmpty(sender) || ObjectUtils.isEmpty(receiver)){
+//            throw new Exception("Invalid Ids");
+//        }
         if(receiver.getMaskedIp()!=null){
             String countryCode = receiver.getMaskedIp().substring(0,3);
 
