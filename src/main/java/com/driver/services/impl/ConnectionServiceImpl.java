@@ -34,38 +34,47 @@ public class ConnectionServiceImpl implements ConnectionService {
         if(user.getOriginalCountry().getCountryName().toString().equalsIgnoreCase(countryName)){
             return user;
         }
-        List<ServiceProvider> serviceProviders = user.getServiceProviderList();
-        ServiceProvider serviceProvider = new ServiceProvider();
-        Country country = new Country();
-        int c=Integer.MAX_VALUE;
+        else{
+            if(user.getServiceProviderList()==null){
+                throw new Exception("Unable to connect");
+            }
+            List<ServiceProvider> serviceProviders = user.getServiceProviderList();
+            ServiceProvider serviceProvider = null;
+            Country country = new Country();
+            int c=Integer.MAX_VALUE;
 
-        for(ServiceProvider serviceProvider1: serviceProviders){
-            List<Country> countryList = serviceProvider1.getCountryList();
-            for(Country country1: countryList){
-                if(country1.getCountryName().toString().equalsIgnoreCase(countryName) && c>serviceProvider1.getId()){
-                    country=country1;
-                    serviceProvider=serviceProvider1;
-                    c=serviceProvider1.getId();
+            for(ServiceProvider serviceProvider1: serviceProviders){
+                List<Country> countryList = serviceProvider1.getCountryList();
+
+                for(Country country1: countryList){
+                    if(country1.getCountryName().toString().equalsIgnoreCase(countryName) && c>serviceProvider1.getId()){
+                        country=country1;
+                        serviceProvider=serviceProvider1;
+                        c=serviceProvider1.getId();
+                    }
                 }
             }
+            if(serviceProvider!=null){
+                Connection connection =new Connection();
+                connection.setUser(user);
+                connection.setServiceProvider(serviceProvider);
+
+                String countryCode = country.getCode();
+                int providerId = serviceProvider.getId();
+                String mask= countryCode+"."+providerId+"."+userId;
+
+                user.setMaskedIp(mask);
+                user.setConnected(true);
+                user.getConnectionList().add(connection);
+//                user.getServiceProviderList().add(serviceProvider);
+
+                serviceProvider.getConnectionList().add(connection);
+
+                serviceProviderRepository2.save(serviceProvider);
+                userRepository2.save(user);
+
+            }
         }
-        if(serviceProvider!=null){
-            Connection connection =new Connection();
-            connection.setUser(user);
-            connection.setServiceProvider(serviceProvider);
-
-            String countryCode = country.getCode();
-            int providerId = serviceProvider.getId();
-            String mask= countryCode+"."+providerId+"."+userId;
-            user.setMaskedIp(mask);
-            user.setConnected(true);
-            user.getServiceProviderList().add(serviceProvider);
-            serviceProvider.getUsers().add(user);
-            serviceProviderRepository2.save(serviceProvider);
-            userRepository2.save(user);
-
-        }
-
         return user;
     }
     @Override
@@ -98,7 +107,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         if(receiver.getMaskedIp()!=null){
             String countryCode = receiver.getMaskedIp().substring(0,3);
 
-            if(sender.getOriginalCountry().getCode().equalsIgnoreCase(countryCode)){
+            if(sender.getOriginalCountry().getCode().equals(countryCode)){
                 return sender; //they can communicate without connection
             }
             else{

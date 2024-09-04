@@ -35,16 +35,17 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Admin addServiceProvider(int adminId, String providerName) {
-        Admin admin = new Admin();
+        Admin admin = adminRepository1.findById(adminId).get();
         ServiceProvider serviceProvider = new ServiceProvider();
-        serviceProvider.setName(providerName);
-        admin.setId(adminId);
-        admin.getServiceProviders().add(serviceProvider);
 
+        serviceProvider.setName(providerName);
+        serviceProvider.setAdmin(admin);
+
+        admin.getServiceProviders().add(serviceProvider);
         adminRepository1.save(admin);
 
         return admin;
-    }
+    }//minor changes
 
     @Override
     public ServiceProvider addCountry(int serviceProviderId, String countryName) throws Exception{
