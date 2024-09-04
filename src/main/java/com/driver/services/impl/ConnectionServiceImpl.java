@@ -39,7 +39,7 @@ public class ConnectionServiceImpl implements ConnectionService {
                 throw new Exception("Unable to connect");
             }
             List<ServiceProvider> serviceProviders = user.getServiceProviderList();
-            ServiceProvider serviceProvider = null;
+            ServiceProvider serviceProvider = new ServiceProvider();
             Country country = new Country();
             int c=Integer.MAX_VALUE;
 
