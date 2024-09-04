@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.driver.model.User;
 
 @RestController
 @RequestMapping("/connection")
@@ -22,7 +23,7 @@ public class ConnectionController {
             //Else, establish the connection where the maskedIp is "updatedCountryCode.serviceProviderId.userId" and return the updated user. If multiple service providers allow you to connect to the country, use the service provider having smallest id.
         User user = connectionService.connect(userId, countryName);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
+    }// code done tested
 
     @DeleteMapping("/disconnect")
     public ResponseEntity<Void> disconnect(@RequestParam int userId) throws Exception{
@@ -31,6 +32,7 @@ public class ConnectionController {
         User user = connectionService.disconnect(userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+    // code done tested
 
     @GetMapping("/communicate")
     public ResponseEntity<Void> communicate(@RequestParam int senderId, @RequestParam int receiverId) throws Exception{
@@ -43,5 +45,6 @@ public class ConnectionController {
         //If communication can not be established due to any reason, throw "Cannot establish communication" exception
         User updatedSender = connectionService.communicate(senderId, receiverId);
         return new ResponseEntity<>(HttpStatus.OK);
+        //code done tested
     }
 }

@@ -1,4 +1,7 @@
 package com.driver.controllers;
+import com.driver.model.Admin;
+import com.driver.model.ServiceProvider;
+import com.driver.model.User;
 
 import com.driver.services.impl.AdminServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +20,14 @@ public class AdminController {
         //create an admin and return
         Admin admin = adminService.register(username, password);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
+    } // code done testing done
 
     @PostMapping("/addProvider")
     public ResponseEntity<Void> addServiceProvider(@RequestParam int adminId, @RequestParam String providerName){
         //add a serviceProvider under the admin and return updated admin
         Admin admin = adminService.addServiceProvider(adminId, providerName);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
+    } // code done testing done
 
     @PostMapping("/addCountry")
     public ResponseEntity<Void> addCountry(@RequestParam int serviceProviderId, @RequestParam String countryName) throws Exception{
@@ -33,5 +36,6 @@ public class AdminController {
         //In case country name is not amongst the above mentioned strings, throw "Country not found" exception
         ServiceProvider serviceProvider = adminService.addCountry(serviceProviderId, countryName);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
+    } // code done testing done
+
 }
